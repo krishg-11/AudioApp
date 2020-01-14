@@ -1,44 +1,96 @@
 package traf1.ganotrakrish.audioapp;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.speech.RecognizerIntent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.content.pm.PackageManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    private final int REQ_CODE = 100;
+    TextView textView;
+    public FloatingActionButton fab;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //https://www.techotopia.com/index.php/An_Android_Studio_Recording_and_Playback_Example_using_MediaPlayer_and_MediaRecorder
-        //https://developer.android.com/guide/topics/media/mediarecorder#java
-        //https://firebase.google.com/docs/storage/android/upload-files (upload from stream or upload from file)
-        //https://www.tutorialspoint.com/how-to-integrate-android-speech-to-text (no audio, just speech-to-text)
-        //https://www.androidhive.info/2014/07/android-speech-to-text-tutorial/ (pretty version of ^^)
-        //use firebase storage for mp3 storage
+        textView = findViewById(R.id.text);
+        ImageView speak = findViewById(R.id.speak);
+        fab = findViewById(R.id.save);
+        fab.setOnClickListener(fabListener);
+
+        database = FirebaseDatabase.getInstance();
 
 
-        MediaPlayer mediaPlayer = new MediaPlayer();
 
-        try {
-            mediaPlayer.setDataSource("AUDIO SOURCE");
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-            System.out.println("playing audio");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println(e);
+
+
+        speak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Need to speak");
+                try {
+                    startActivityForResult(intent, REQ_CODE);
+                } catch (ActivityNotFoundException a) {
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry your device not supported",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_CODE: {
+                if (resultCode == RESULT_OK && null != data) {
+                    ArrayList result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    textView.setText(textView.getText().toString() + " " + result.get(0).toString());
+                }
+                break;
+            }
         }
-        System.out.println("Microphone access: " + hasMicrophone());
+    }
 
-    }
-     boolean hasMicrophone() {
-        PackageManager pmanager = this.getPackageManager();
-        return pmanager.hasSystemFeature(
-                PackageManager.FEATURE_MICROPHONE);
-    }
+    View.OnClickListener fabListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            if(textView.getText().toString().length() != 0) {
+
+                int count=1;
+                while(true) {
+                    System.out.println("in if statement of clicked");
+                    System.out.println(textView.getText().toString());
+                    //
+                    DatabaseReference myRef = database.getReference("message");
+                    myRef.setValue("Hello, World!");
+                    //DOESN'T WORK
+                    break;
+                }
+            }
+        }
+    };
 }
