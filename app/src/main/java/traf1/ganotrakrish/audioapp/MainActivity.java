@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,12 +19,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+
+
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
     private final int REQ_CODE = 100;
     TextView textView;
     public FloatingActionButton fab;
     FirebaseDatabase database;
     DatabaseReference myRef;
+    public TextToSpeech tts;
+    public FloatingActionButton btnSpeak;
 
 
     @Override
@@ -37,8 +42,16 @@ public class MainActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
 
+        tts = new TextToSpeech(this, this);
+        btnSpeak = findViewById(R.id.speakOut);
+        btnSpeak.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View arg0) {
+                speakOut();
+            }
 
+        });
 
 
         speak.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -82,15 +96,51 @@ public class MainActivity extends AppCompatActivity {
 
                 int count=1;
                 while(true) {
-                    System.out.println("in if statement of clicked");
-                    System.out.println(textView.getText().toString());
                     //
-                    DatabaseReference myRef = database.getReference("message");
-                    myRef.setValue("Hello, World!");
+                    DatabaseReference myRef = database.getReference(count+"");
+                    myRef.setValue(textView.getText().toString());
                     //DOESN'T WORK
                     break;
                 }
             }
         }
     };
+
+    @Override
+    public void onDestroy() {
+        // Don't forget to shutdown tts!
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onInit(int status) {
+
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = tts.setLanguage(Locale.US);
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                System.out.println("This Language is not supported");
+            } else {
+                btnSpeak.setEnabled(true);
+                speakOut();
+            }
+
+        } else {
+            System.out.println("Initilization Failed!");
+        }
+
+    }
+
+    private void speakOut() {
+
+        String text = textView.getText().toString();
+
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
 }
