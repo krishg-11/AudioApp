@@ -4,6 +4,7 @@
     package="traf1.ganotrakrish.audioapp">
 
     <dist:module dist:instant="true" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
@@ -13,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".IntroActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +23,5 @@
             </intent-filter>
         </activity>
     </application>
-
 
 </manifest>

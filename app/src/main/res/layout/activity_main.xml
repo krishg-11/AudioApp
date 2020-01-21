@@ -6,55 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <EditText
-        android:id = "@+id/text"
-        android:textSize = "30sp"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
-
-    <ImageView
-        android:id = "@+id/speak"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:background = "?selectableItemBackground"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:id="@+id/record"
+        android:tint="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="5dp"
         android:src = "@android:drawable/ic_btn_speak_now"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:id="@+id/save"
-        android:tint="@android:color/white"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="5dp"
-        app:fabSize="mini"
-        android:src="@drawable/ic_save"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:id="@+id/speakOut"
-        android:tint="@android:color/white"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="5dp"
-        app:fabSize="mini"
-        android:src="@drawable/ic_play_arrow_black_24dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
